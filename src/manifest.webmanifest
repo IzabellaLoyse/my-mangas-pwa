@@ -60,12 +60,5 @@
   ],
   "prefer_related_applications": false,
   "related_applications": [],
-  "categories": ["entertainment"],
-  // "screenshots": [
-  //   {
-  //     "src": "assets/screenshots/screenshot-1.jpg",
-  //     "sizes": "1280x720",
-  //     "type": "image/jpeg"
-  //   }
-  // ]
+  "categories": ["entertainment"] 
 }

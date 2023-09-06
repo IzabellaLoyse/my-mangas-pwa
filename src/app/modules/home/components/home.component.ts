@@ -21,11 +21,7 @@ export class HomeComponent implements OnInit {
   }
 
   public isCanInstallPWA(): boolean {
-    return (
-      this.platform.isBrowser &&
-      'serviceWorker' in navigator &&
-      'beforeinstallprompt' in window
-    );
+    return this.platform.isBrowser && 'serviceWorker' in navigator;
   }
 
   public handleInstallPWA(): void {

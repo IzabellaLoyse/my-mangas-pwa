@@ -1,4 +1,4 @@
-import { Platform } from '@angular/cdk/platform';
+
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 
@@ -10,30 +10,32 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  public isInstalled = false;
+  private deferredPrompt: any;
+  public isInstallable = false;
 
-  constructor(private platform: Platform) {}
+  constructor() {}
 
   ngOnInit(): void {
-    window.addEventListener('beforeinstallprompt', (event: Event) => {
+    window.addEventListener('beforeinstallprompt', (event: any) => {
       event.preventDefault();
+      this.deferredPrompt = event;
+      this.isInstallable = true;
     });
-  }
 
-  public isCanInstallPWA(): boolean {
-    return this.platform.isBrowser && 'serviceWorker' in navigator;
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      this.isInstallable = false;
+    }
   }
 
   public handleInstallPWA(): void {
-    const promptEvent = (window as any).beforeinstallprompt;
-
-    if (promptEvent) {
-      promptEvent.prompt();
-
-      promptEvent.userChoice.then((choiceResult: any) => {
+    if (this.deferredPrompt) {
+      this.deferredPrompt.prompt();
+      this.deferredPrompt.userChoice.then((choiceResult: any) => {
         if (choiceResult.outcome === 'accepted') {
-          this.isInstalled = true;
+          console.log('O usuário instalou o PWA.');
+          this.isInstallable = false;
         }
+        this.deferredPrompt = null;
       });
     }
   }

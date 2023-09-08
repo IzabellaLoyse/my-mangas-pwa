@@ -2,8 +2,7 @@
   <h3>home</h3>
 
   <div *ngIf="isInstallable">
-    <a href="/" (click)="handleInstallPWA()"
-      >Transforme este site em um aplicativo. Toque para instalar</a
-    >
+    <p>Transforme este site em um aplicativo. Toque para instalar</p>
+    <button (click)="handleInstallPWA()">Instalar</button>
   </div>
 </section>

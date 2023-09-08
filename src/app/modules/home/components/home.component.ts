@@ -1,4 +1,3 @@
-
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 
@@ -10,33 +9,44 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  private deferredPrompt: any;
   public isInstallable = false;
 
-  constructor() {}
+  public ngOnInit(): void {
+    this.checkIfInstallable();
 
-  ngOnInit(): void {
-    window.addEventListener('beforeinstallprompt', (event: any) => {
-      event.preventDefault();
-      this.deferredPrompt = event;
-      this.isInstallable = true;
+    window.addEventListener('appinstalled', (event) => {
+      (window as any).deferredPrompt = null;
     });
 
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      this.isInstallable = false;
-    }
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      (window as any).deferredPrompt = event;
+      this.isInstallable = true;
+    });
   }
 
   public handleInstallPWA(): void {
-    if (this.deferredPrompt) {
-      this.deferredPrompt.prompt();
-      this.deferredPrompt.userChoice.then((choiceResult: any) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log('O usuário instalou o PWA.');
-          this.isInstallable = false;
-        }
-        this.deferredPrompt = null;
-      });
+    if (this.isInstallable) {
+      const deferredPrompt = (window as any).deferredPrompt;
+
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((choiceResult: any) => {
+          if (choiceResult.outcome === 'accepted') {
+            this.isInstallable = false;
+          }
+          (window as any).deferredPrompt = null;
+        });
+      }
+    }
+  }
+
+  private checkIfInstallable(): void {
+    if (
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true
+    ) {
+      this.isInstallable = false;
     }
   }
 }
